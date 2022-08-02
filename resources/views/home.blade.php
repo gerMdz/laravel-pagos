@@ -37,8 +37,45 @@
                                         @endforeach
                                     </select>
                                 </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label>Seleccione plataforma</label>
+                                    <div class="form-group" id="toggler">
+                                        <div class="btn-group btn-group-toggle"
+                                             data-bs-toggle="buttons"
+                                        >
+                                            @foreach($paymentPlatforms as $paymentPlatform)
+                                                <label
+                                                       class="btn btn-outline-secondary rounded m-2 p-1"
+                                                       data-bs-target="#{{$paymentPlatform->name}}Collapse"
+                                                       data-bs-toggle="collapse"
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="payment_platform"
+                                                        value="{{$paymentPlatform->id}}"
+                                                        required
 
-                                <div class="text-center mt-3">
+                                                    >
+                                                    <img class="img-thumbnail" src="{{asset($paymentPlatform->image)}}"
+                                                         alt="{{$paymentPlatform->name}}">
+
+                                                </label>
+
+                                            @endforeach
+                                        </div>
+                                        @foreach($paymentPlatforms as $paymentPlatform)
+                                            <div id="{{$paymentPlatform->name}}Collapse" class="collapse" data-bs-parent="#toggler">
+                                                @includeIf('components.'.strtolower($paymentPlatform->name).'-collapse')
+                                            </div>
+
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row  mt-3">
+                                <div class="col text-center">
                                     <button type="submit" id="payButton"
                                             class="btn btn-primary btn-lg"
                                     >
@@ -46,6 +83,7 @@
                                     </button>
                                 </div>
                             </div>
+
                         </form>
                     </div>
                 </div>
