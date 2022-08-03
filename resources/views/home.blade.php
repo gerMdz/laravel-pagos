@@ -8,7 +8,7 @@
                     <div class="card-header">{{ __('Dashboard') }}</div>
 
                     <div class="card-body">
-                        <form action="#" method="POST" id="paymentForm">
+                        <form action="{{route('pay')}}" method="POST" id="paymentForm">
                             @csrf
                             <div class="row">
                                 <div class="col-auto">
@@ -16,6 +16,7 @@
                                     <input
                                         id="payMont"
                                         type="number"
+                                        name="value"
                                         min="5"
                                         step="0.01"
                                         class="form-control"
