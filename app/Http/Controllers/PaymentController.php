@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PayPalService;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function pay(Request $request): array
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function pay(Request $request)
     {
         $rules =[
           'value' => ['required', 'numeric', 'min:5'],
@@ -16,7 +21,9 @@ class PaymentController extends Controller
 
         $request->validate($rules);
 
-         return $request->all();
+        $paymentPlatform = resolve(PayPalService::class);
+
+        return $paymentPlatform->handlePayment($request);
     }
 
     public function approval()

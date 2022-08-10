@@ -8,21 +8,29 @@ use GuzzleHttp\Exception\GuzzleException;
 trait ConsumesExternalServices
 {
     /**
+     * @param string $method
+     * @param string $requestUrl
+     * @param array $queryParams
+     * @param array $formParams
+     * @param array $headers
+     * @param bool $isJsonRequest
+     * @return mixed|string
      * @throws GuzzleException
      */
-    public function makeRequest(string $method, string $requestUrl, array $queryParams = [], array $formsParams = [], array $headers = [], bool $isJsonRequest = false): string
+    public function makeRequest(string $method, string $requestUrl, array $queryParams = [], array $formParams = [], array $headers = [], bool $isJsonRequest = false)
     {
         $client = new Client([
-            'base_uri' => $this->baseUri
+            'base_uri' => $this->baseUri,
         ]);
 
         if (method_exists($this, 'resolveAuthorization')) {
-            $this->resolveAuthorization($queryParams, $formsParams, $headers);
+            $this->resolveAuthorization($queryParams, $formParams, $headers);
         }
+
         $response = $client->request($method, $requestUrl, [
-            $isJsonRequest ? 'json' : 'formsParams' => $formsParams,
+            $isJsonRequest ? 'json' : 'form_params' => $formParams,
             'headers' => $headers,
-            'query' => $queryParams
+            'query' => $queryParams,
         ]);
 
         $response = $response->getBody()->getContents();

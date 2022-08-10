@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Traits\ConsumesExternalServices;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Request;
 
 class PayPalService
 {
@@ -15,9 +16,9 @@ class PayPalService
 
     public function __construct()
     {
-        $this->baseUri = config('service.paypal.base_uri');
-        $this->clientId = config('service.paypal.client_id');
-        $this->clientSecret = config('service.paypal.client_secret');
+        $this->baseUri = config('services.paypal.base_uri');
+        $this->clientId = config('services.paypal.client_id');
+        $this->clientSecret = config('services.paypal.client_secret');
     }
 
     public function resolveAuthorization(&$queryParams, &$formsParams, &$headers)
@@ -39,7 +40,26 @@ class PayPalService
     /**
      * @throws GuzzleException
      */
-    public function createOrder($value, $currency): string
+    public function handlePayment(Request $request)
+    {
+        $order = $this->createOrder($request->value, $request->currency);
+
+        $orderLinks = collect($order->links);
+
+        $approve = $orderLinks->where('rel', 'approve')->first();
+
+//        session()->put('approvalId', $order->id);
+
+        return redirect($approve->href);
+    }
+
+    /**
+     * @param $value
+     * @param $currency
+     * @return mixed|string
+     * @throws GuzzleException
+     */
+    public function createOrder($value, $currency)
     {
         return $this->makeRequest(
             'POST',
@@ -47,13 +67,13 @@ class PayPalService
             [],
             [
                 'intent' => 'CAPTURE',
-                "purchase_units" => [
+                'purchase_units' => [
                     0 => [
                         'amount' => [
                             'currency_code' => strtoupper($currency),
-                            'value' => $value
-                        ],
-                    ],
+                            'value' => $value,
+                        ]
+                    ]
                 ],
                 'application_context' => [
                     'brand_name' => config('app.name'),
@@ -61,10 +81,23 @@ class PayPalService
                     'user_action' => 'PAY_NOW',
                     'return_url' => route('approval'),
                     'cancel_url' => route('cancelled'),
-                ],
+                ]
             ],
             [],
-            true
+            $isJsonRequest = true,
         );
+    }
+
+    public function capturePayment(string $approvalId): string
+    {
+            return $this->makeRequest(
+                'POST',
+                "v2/checkout/orders/{$approvalId}/capture",
+                [],
+                [],
+                [
+                    'Content-Type'=> 'application/json',
+                ]
+            );
     }
 }
