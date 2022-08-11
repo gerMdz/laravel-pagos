@@ -28,11 +28,14 @@ class PaymentController extends Controller
 
     public function approval()
     {
-
+        $paymentPlatform = resolve(PayPalService::class);
+        return $paymentPlatform->handleApproval();
     }
 
     public function cancelled()
     {
-
+        return redirect()
+            ->route('home')
+            ->withErrors('Se canceló el pago');
     }
 }

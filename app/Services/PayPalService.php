@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Traits\ConsumesExternalServices;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PayPalService
@@ -48,7 +49,7 @@ class PayPalService
 
         $approve = $orderLinks->where('rel', 'approve')->first();
 
-//        session()->put('approvalId', $order->id);
+        session()->put('approvalId', $order->id);
 
         return redirect($approve->href);
     }
@@ -88,7 +89,7 @@ class PayPalService
         );
     }
 
-    public function capturePayment(string $approvalId): string
+    public function capturePayment(string $approvalId)
     {
             return $this->makeRequest(
                 'POST',
@@ -99,5 +100,26 @@ class PayPalService
                     'Content-Type'=> 'application/json',
                 ]
             );
+    }
+
+    public function handleApproval(): RedirectResponse
+    {
+        if(session()->has('approvalId')){
+            $approvalId = session()->get('approvalId');
+            $payment = $this->capturePayment($approvalId);
+
+            $name = $payment->payer->name->given_name;
+
+            $pago = $payment->purchase_units[0]->payments->captures[0]->amount;
+
+            $amount = $pago->value;
+            $currency = $pago->currency_code;
+
+            return redirect()
+                ->route('home')
+                ->withSuccess(['payment' => "Gracias, {$name}. Hemos recibido tu pago de {$amount}{$currency}"]);
+        }
+
+        return redirect()->route('home')->withErrors('No fue posible obtener el pago');
     }
 }
