@@ -62,6 +62,8 @@ class PayPalService
      */
     public function createOrder($value, $currency)
     {
+        $factor = $this->resolveFactor($currency);
+
         return $this->makeRequest(
             'POST',
             '/v2/checkout/orders',
@@ -72,7 +74,7 @@ class PayPalService
                     0 => [
                         'amount' => [
                             'currency_code' => strtoupper($currency),
-                            'value' => $value,
+                            'value' => round($value * $factor) / $factor,
                         ]
                     ]
                 ],
@@ -121,5 +123,14 @@ class PayPalService
         }
 
         return redirect()->route('home')->withErrors('No fue posible obtener el pago');
+    }
+
+    public function resolveFactor($currency): int
+    {
+        $zeroDecimalCurrencies = ['JPY'];
+        if(in_array(strtoupper($currency), $zeroDecimalCurrencies)){
+            return 1;
+        }
+        return 100;
     }
 }
