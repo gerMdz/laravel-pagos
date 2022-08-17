@@ -2,11 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Resolvers\PaymentPlatformResolver;
 use App\Services\PayPalService;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+    /**
+     * @var PaymentPlatformResolver
+     */
+    protected $paymentPlatformResolver;
+
+    /**
+     * @param PaymentPlatformResolver $paymentPlatformResolver
+     */
+    public function __construct(PaymentPlatformResolver $paymentPlatformResolver)
+    {
+        $this->middleware('auth');
+        $this->paymentPlatformResolver = $paymentPlatformResolver;
+    }
+
+
+
     /**
      * @param Request $request
      * @return mixed
@@ -21,15 +38,25 @@ class PaymentController extends Controller
 
         $request->validate($rules);
 
-        $paymentPlatform = resolve(PayPalService::class);
+        $paymentPlatform = $this->paymentPlatformResolver->resolveService($request->payment_platform);
+
+        session()->put('paymentPlatformId', $request->payment_platform );
+
 
         return $paymentPlatform->handlePayment($request);
     }
 
     public function approval()
     {
-        $paymentPlatform = resolve(PayPalService::class);
-        return $paymentPlatform->handleApproval();
+        if(session()->has('paymentPlatformId')){
+            $paymentPlatform = $this->paymentPlatformResolver->resolveService(session()->get('paymentPlatformId'));
+            return $paymentPlatform->handleApproval();
+        }
+
+        return redirect()
+            ->route('home')
+            ->withErrors('No se encontró la plataforma requerida');
+
     }
 
     public function cancelled()

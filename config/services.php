@@ -28,6 +28,13 @@ return [
         'class' => PayPalService::class,
 
     ],
+    'stripe' => [
+        'base_uri' => env('STRIPE_BASE_URI'),
+        'client_id' => env('STRIPE_CLIENT_ID'),
+        'client_secret' => env('STRIPE_CLIENT_SECRET'),
+        'class' => StripeService::class,
+
+    ],
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
