@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\PayPalService;
+use App\Services\StripeService;
 
 return [
 
@@ -30,8 +31,8 @@ return [
     ],
     'stripe' => [
         'base_uri' => env('STRIPE_BASE_URI'),
-        'client_id' => env('STRIPE_CLIENT_ID'),
-        'client_secret' => env('STRIPE_CLIENT_SECRET'),
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
         'class' => StripeService::class,
 
     ],
