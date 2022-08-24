@@ -64,12 +64,39 @@ class StripeService
 //
     }
 
+    public function createIntent($value, $currency, $paymentMethod)
+    {
+       return $this->makeRequest(
+            'POST',
+            '/v1/payment_intents',
+            [],
+            [
+                'amount' => round($value * $this->resolveFactor($currency)),
+                'currency' => strtolower($currency) ,
+                'payment_method' => $paymentMethod,
+                'confirmation_method' => 'manual'
+            ]
+        );
+    }
+
+    public function confirmPayment($paymentIntentId)
+    {
+        return $this->makeRequest(
+            'POST',
+            "/v1/payment_intents/{$paymentIntentId}/confirm",
+            [],
+            []
+        );
+    }
+
+
+
     public function resolveFactor($currency): int
     {
         $zeroDecimalCurrencies = ['JPY'];
         if(in_array(strtoupper($currency), $zeroDecimalCurrencies)){
-            return 1;
+            return 100;
         }
-        return 100;
+        return 1;
     }
 }
