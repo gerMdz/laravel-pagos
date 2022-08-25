@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Traits\ConsumesExternalServices;
 
@@ -40,7 +41,7 @@ class StripeService
         return "Bearer {$this->secret}";
     }
 
-    public function handlePayment(Request $request)
+    public function handlePayment(Request $request): RedirectResponse
     {
         $request->validate([
             'payment_method' => 'required',
@@ -75,13 +76,13 @@ class StripeService
 
                 return redirect()
                     ->route('home')
-                    ->withSuccess(['payment' => "Thanks, {$name}. We received your {$amount}{$currency} payment."]);
+                    ->withSuccess(['payment' => "Gracias, {$name}. Hemos recibido tu pago de {$amount}{$currency}."]);
             }
         }
 
         return redirect()
             ->route('home')
-            ->withErrors('We were unable to confirm your payment. Try again, please');
+            ->withErrors('No pudimos confirmar su pago. Por favor, inténtalo de nuevo');
     }
 
     public function handleSubscription(Request $request)
