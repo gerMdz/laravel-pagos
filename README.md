@@ -25,6 +25,13 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 Documentación de PayPal
 > https://developer.paypal.com/docs/api/orders/v2/#orders_create
 
+### APIS Conversión Dólar
+> https://www.exchangerate-api.com/
+ 
+> https://free.currencyconverterapi.com/
+
+> https://estadisticasbcra.com/api/documentacion
+
 
 
 ## Learning Laravel

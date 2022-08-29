@@ -17,6 +17,14 @@ return [
     |
     */
 
+    'currency_conversion' => [
+        'base_uri' => env('CURRENCY_CONVERSION_BASE_URI'),
+        'api_key' => env('CURRENCY_CONVERSION_API_KEY'),
+        'api_client' => env('CURRENCY_CONVERSION_API_CLIENT'),
+        'api_path' => env('CURRENCY_CONVERSION_PATH'),
+        'class' => PayPalService::class,
+
+    ],
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
