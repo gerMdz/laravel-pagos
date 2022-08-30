@@ -37,11 +37,11 @@ class CurrencyConversionService
 //        $queryParams[$this->resolveAccessToken()];
     }
 
-    public function resolveRequestUrl()
+    public function resolveRequestUrl(string $currency)
     {
         return $this->makeRequest(
             'GET',
-            $this->apiKey.$this->apipath,
+            $this->apiKey . $this->apipath . strtoupper($currency),
             [],
             []
         );
@@ -60,10 +60,14 @@ class CurrencyConversionService
 
     public function convertCurrency($from, $to)
     {
-        //
+        $response = $this->resolveRequestUrl($from);
+
+        if ($response->result == 'success') {
+            return json_encode($response->conversion_rates->{strtoupper("{$to}")});
+        }
+        return false;
+
     }
-
-
 
 
 }
