@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\MercadoPagoService;
 use App\Services\PayPalService;
 use App\Services\StripeService;
 
@@ -30,12 +31,18 @@ return [
         'secret' => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
+    'mercadopago' => [
+        'base_uri' => env('MERCADO_PAGO_BASE_URI'),
+        'key' => env('MERCADO_PAGO_CLIENT_ID'),
+        'secret' => env('MERCADO_PAGO_CLIENT_SECRET'),
+        'class' => MercadoPagoService::class,
+        'base_currency' => env('MERCADO_PAGO_CURRENCY'),
+    ],
     'paypal' => [
         'base_uri' => env('PAYPAL_BASE_URI'),
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'client_secret' => env('PAYPAL_CLIENT_SECRET'),
         'class' => PayPalService::class,
-
     ],
     'stripe' => [
         'base_uri' => env('STRIPE_BASE_URI'),
