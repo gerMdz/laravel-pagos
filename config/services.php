@@ -33,7 +33,7 @@ return [
     ],
     'mercadopago' => [
         'base_uri' => env('MERCADO_PAGO_BASE_URI'),
-        'key' => env('MERCADO_PAGO_CLIENT_ID'),
+        'key' => env('MERCADO_PAGO_KEY'),
         'secret' => env('MERCADO_PAGO_CLIENT_SECRET'),
         'class' => MercadoPagoService::class,
         'base_currency' => env('MERCADO_PAGO_CURRENCY'),
