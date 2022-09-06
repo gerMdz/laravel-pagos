@@ -69,6 +69,7 @@
     <script>
             function setCardNetwork(){
                 let cardNumber = document.getElementById("cardNumber")
+                console.log('data ' + cardNumber.value.toString().replace(" ", "").substring(0,6));
                 mp.getPaymentMethod(
                     { "bin": cardNumber.value.toString().replace(" ", "").substring(0,6) },
                     function(status, response) {
@@ -84,6 +85,7 @@
         mercadoPagoForm.addEventListener('submit', function(e) {
             if (mercadoPagoForm.elements.payment_platform.value === "{{ $paymentPlatform->id }}") {
                 e.preventDefault();
+                setCardNetwork();
                 mp.createToken(mercadoPagoForm, function(status, response) {
                     if (status !== 200 && status !== 201) {
                         const errors = document.getElementById("paymentErrors");

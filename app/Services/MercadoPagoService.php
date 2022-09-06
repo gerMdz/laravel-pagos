@@ -17,18 +17,27 @@ class MercadoPagoService
     protected $clientSecret;
     protected $clientCurrency;
     protected $clientKey;
+    /**
+     * @var CurrencyConversionService
+     */
+    protected $conversionService;
 
-    public function __construct()
+
+    /**
+     * @param CurrencyConversionService $conversionService
+     */
+    public function __construct(CurrencyConversionService $conversionService)
     {
         $this->baseUri = config('services.mercadopago.base_uri');
         $this->clientKey = config('services.mercadopago.key');
         $this->clientSecret = config('services.mercadopago.secret');
         $this->clientCurrency = config('services.mercadopago.base_currency');
+        $this->conversionService = $conversionService;
     }
 
     public function resolveAuthorization(&$queryParams, &$formsParams, &$headers)
     {
-        $headers['Authorization'] = $this->resolveAccessToken();
+        $queryParams['access_token'] = $this->resolveAccessToken();
     }
 
     public function decodeResponse($response)
@@ -36,10 +45,10 @@ class MercadoPagoService
         return json_decode($response);
     }
 
-    public function resolveAccessToken(): string
+    public function resolveAccessToken()
     {
-        $credentials = base64_encode("{$this->clientId}:{$this->clientSecret}");
-        return "Basic {$credentials}";
+
+        return $this->clientSecret;
     }
 
 
@@ -67,8 +76,31 @@ class MercadoPagoService
         //
     }
 
-    public function resolveFactor($currency):void
+    public function createPayment($value, $currency, $cardNetwork, $cardToken, $email, $installments = 1)
     {
-        //
+        return $this->makeRequest(
+            'POST',
+            '/v1/payments',
+            [],
+            [
+                'payer' => [
+                    'email' => $email,
+                ],
+                'binary_mode' => true,
+                'transaction_amount' => round($value * $this->resolveFactor($currency)),
+                'payment_method_id' => $cardNetwork,
+                'token' => $cardToken,
+                'installments' => $installments,
+                'statement_descriptor' => config('app.name')
+            ],
+            [],
+            true
+        );
+    }
+
+    public function resolveFactor($currency)
+    {
+        return
+        $this->conversionService->convertCurrency($currency, $this->clientCurrency);
     }
 }
