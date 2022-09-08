@@ -2,6 +2,7 @@
 
 use App\Services\MercadoPagoService;
 use App\Services\PayPalService;
+use App\Services\PayUService;
 use App\Services\StripeService;
 
 return [
@@ -43,6 +44,15 @@ return [
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'client_secret' => env('PAYPAL_CLIENT_SECRET'),
         'class' => PayPalService::class,
+    ],
+    'payu' => [
+        'base_uri' => env('PAYU_BASE_URI'),
+        'account_id' => env('PAYU_ACCOUNT_ID'),
+        'merchant_id' => env('PAYU_MERCHANT_ID'),
+        'class' => PayUService::class,
+        'base_currency' => env('PAYU_CURRENCY'),
+        'key' => env('PAYU_API_KEY'),
+        'secret' => env('PAYU_API_LOGIN'),
     ],
     'stripe' => [
         'base_uri' => env('STRIPE_BASE_URI'),

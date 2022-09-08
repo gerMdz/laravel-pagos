@@ -35,6 +35,9 @@ Documentación de PayPal
 ### API MP
 > https://www.mercadopago.com.ar/developers/es
 
+### PayU Latam
+> https://developers.payulatam.com/latam/es/docs/getting-started/test-your-solution.html
+
 
 
 ## Learning Laravel
