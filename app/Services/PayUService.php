@@ -49,16 +49,17 @@ class PayUService
         $this->baseUri = config('services.payu.base_uri');
         $this->secret = config('services.payu.secret');
         $this->key = config('services.payu.key');
-        $this->base_currency = config('services.payu.base_currency');
+        $this->base_currency = strtoupper(config('services.payu.base_currency'));
         $this->merchant_id = config('services.payu.merchant_id');
         $this->account_id = config('services.payu.account_id');
 
         $this->converter = $converter;
     }
 
-    public function resolveAuthorization(&$queryParams, &$formsParams, &$headers)
+    public function resolveAuthorization(&$queryParams, &$formParams, &$headers)
     {
-//        $headers['Authorization'] = $this->resolveAccessToken();
+        $formParams['merchant']['apiKey'] = $this->key;
+        $formParams['merchant']['apiLogin'] = $this->secret;
     }
 
     public function decodeResponse($response)
