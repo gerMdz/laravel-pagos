@@ -8,6 +8,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PayUService
 {
@@ -134,27 +135,88 @@ class PayUService
             [],
             [],
             [
-                'Content-Type'=> 'application/json',
+                'Content-Type' => 'application/json',
             ]
         );
     }
 
     public function handleApproval()
     {
-       //
+        //
     }
 
     public function resolveFactor($currency): int
     {
         $zeroDecimalCurrencies = ['JPY'];
-        if(in_array(strtoupper($currency), $zeroDecimalCurrencies)){
+        if (in_array(strtoupper($currency), $zeroDecimalCurrencies)) {
             return 1;
         }
         return 100;
     }
 
-    public function generateSignature()
+    public function generateSignature($referenceCode, $value): string
     {
-        //
+        return md5("{$this->key}~{$this->merchant_id}~{$referenceCode}~{$value}~{$this->base_currency}");
+    }
+
+
+    public function createPayment($value, $currency, $name, $email, $card, $cvc, $year, $month, $network, $installments = 1, $paymentCountry = 'AR')
+    {
+        return $this->makeRequest(
+            'POST',
+            '/payments-api/4.0/service.cgi',
+            [],
+            [
+                'language' => $language = config('app.locale'),
+                'command' => 'SUBMIT_TRANSACTION',
+                'test' => false,
+                'transaction' => [
+                    'type' => 'AUTHORIZATION_AND_CAPTURE',
+                    'paymentMethod' => strtoupper($network),
+                    'paymentCountry' => strtoupper($paymentCountry),
+                    'deviceSessionId' => session()->getId(),
+                    'ipAddress' => request()->ip(),
+                    'userAgent' => request()->header('user-Agent'),
+                    'creditCard' => [
+                        'number' => $card,
+                        'securityCode' => $cvc,
+                        'expirationDate' => "{$year}/{$month}",
+                        'name' => "APPROVED",
+                    ],
+                    'extraParameters' => [
+                        'INSTALLMENTS_NUMBER' => $installments
+                    ],
+                    'payer' => [
+                        'fullName' => $name,
+                        'emailAddress' => $email,
+                    ],
+                    'order' => [
+                        'accountId' => $this->account_id,
+                        'referenceCode' => $reference = Str::ramdom(12),
+                        'description' => 'Compra con PayU',
+                        'language' => $language,
+                        'signature' => $this->generateSignature($reference, $value = round($value * $this->resolveFactor($currency))),
+                        'additionalValues' => [
+                            'TX_VALUE' => [
+                                'value' => $value,
+                                'currency' => $this->base_currency
+                            ],
+                        ],
+                        'buyer' => [
+                            'fullName' => $name,
+                            'emailAddress' => $email,
+                            'shippingAddress' => [
+                                'street1' => '',
+                                'city' => '',
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+            [
+                'Accept' => 'application/json'
+            ],
+            true
+        );
     }
 }

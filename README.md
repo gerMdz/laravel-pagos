@@ -38,6 +38,9 @@ Documentación de PayPal
 ### PayU Latam
 > https://developers.payulatam.com/latam/es/docs/getting-started/test-your-solution.html
 
+> https://developers.payulatam.com/latam/es/docs/integrations.html
+
+> https://developers.payulatam.com/latam/es/docs/services/payments.html 
 
 
 ## Learning Laravel
