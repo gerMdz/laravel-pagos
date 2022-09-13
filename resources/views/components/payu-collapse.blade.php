@@ -8,10 +8,10 @@
     </div>
 
     <div class="col-sm-2">
-        <input type="text" name="mounth" class="form-control" placeholder="MM">
+        <input type="text" name="month" class="form-control" placeholder="MM">
     </div>
     <div class="col-sm-2">
-        <input type="text" name="year" class="form-control" placeholder="AA">
+        <input type="text" name="year" class="form-control" placeholder="AAAA">
     </div>
     <div class="col-sm-2">
         <select id="" class="form-select" name="network">

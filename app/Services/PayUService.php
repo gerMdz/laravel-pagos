@@ -74,20 +74,50 @@ class PayUService
         return "Basic {$credentials}";
     }
 
+
     /**
      * @throws GuzzleException
      */
     public function handlePayment(Request $request)
     {
-        $order = $this->createOrder($request->value, $request->currency);
 
-        $orderLinks = collect($order->links);
+        $request->validate([
+           'card' => 'required',
+           'cvc' => 'required',
+           'year' => 'required',
+           'month' => 'required',
+           'network' => 'required',
+           'name' => 'required',
+           'email' => 'required',
+        ]);
 
-        $approve = $orderLinks->where('rel', 'approve')->first();
+        $payment = $this->createPayment(
+            $request->value,
+            $request->currency,
+            $request->name,
+            $request->email,
+            $request->card,
+            $request->cvc,
+            $request->year,
+            $request->month,
+            $request->network,
+        );
 
-        session()->put('approvalId', $order->id);
 
-        return redirect($approve->href);
+
+        if($payment->transactionResponse->responseCode == 'APPROVED')
+        {
+            $name = $request->name;
+            $amount = $request->value;
+            $currency = strtoupper($request->currency);
+            return redirect()
+                ->route('home')
+                ->withSuccess(['payment' => "Gracias, {$name}. Hemos recibido tu pago de ({$amount}{$currency})"]);
+        }
+        return redirect()
+            ->route('home')
+            ->withErrors('No pudimos procesar su pago. Por favor, inténtalo de nuevo');
+
     }
 
     /**
@@ -160,6 +190,21 @@ class PayUService
     }
 
 
+    /**
+     * @param $value
+     * @param $currency
+     * @param $name
+     * @param $email
+     * @param $card
+     * @param $cvc
+     * @param $year
+     * @param $month
+     * @param $network
+     * @param $installments
+     * @param $paymentCountry
+     * @return mixed|string
+     * @throws GuzzleException
+     */
     public function createPayment($value, $currency, $name, $email, $card, $cvc, $year, $month, $network, $installments = 1, $paymentCountry = 'AR')
     {
         return $this->makeRequest(
@@ -192,7 +237,7 @@ class PayUService
                     ],
                     'order' => [
                         'accountId' => $this->account_id,
-                        'referenceCode' => $reference = Str::ramdom(12),
+                        'referenceCode' => $reference = Str::random(12),
                         'description' => 'Compra con PayU',
                         'language' => $language,
                         'signature' => $this->generateSignature($reference, $value = round($value * $this->resolveFactor($currency))),
