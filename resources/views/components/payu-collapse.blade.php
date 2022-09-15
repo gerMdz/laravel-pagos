@@ -1,20 +1,20 @@
 <label class="mt-3">Detalles de las tarjetas:</label>
 <div class="form-group row">
     <div class="col-4">
-        <input class="form-control" type="text" name="card" placeholder="Nro tarjeta">
+        <input class="form-control" type="text" name="payu_card" placeholder="Nro tarjeta">
     </div>
     <div class="col-sm-2">
-        <input type="text" name="cvc" class="form-control" placeholder="CVC">
+        <input type="text" name="payu_cvc" class="form-control" placeholder="CVC">
     </div>
 
     <div class="col-sm-2">
-        <input type="text" name="month" class="form-control" placeholder="MM">
+        <input type="text" name="payu_month" class="form-control" placeholder="MM">
     </div>
     <div class="col-sm-2">
-        <input type="text" name="year" class="form-control" placeholder="AAAA">
+        <input type="text" name="payu_year" class="form-control" placeholder="AAAA">
     </div>
     <div class="col-sm-2">
-        <select id="" class="form-select" name="network">
+        <select id="" class="form-select" name="payu_network">
             <option selected>Seleccione ...</option>
             <option value="visa">Visa</option>
             <option value="amex">AMEX</option>
@@ -25,10 +25,10 @@
 </div>
 <div class="form-group row">
     <div class="col-5">
-        <input type="text" name="name" class="form-control" placeholder="Nombre">
+        <input type="text" name="payu_name" class="form-control" placeholder="Nombre">
     </div>
     <div class="col-5">
-        <input type="email" class="form-control" name="email"  placeholder="email@ejemplo.com">
+        <input type="email" class="form-control" name="payu_email"  placeholder="email@ejemplo.com">
     </div>
 </div>
 
