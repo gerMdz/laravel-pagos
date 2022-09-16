@@ -43,9 +43,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function subscription(): HasOne
+    public function subscription()
     {
         return $this->hasOne(Subscription::class);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return optional($this->subscription)->isActive()?? false;
     }
 
 }

@@ -48,9 +48,9 @@
                                         >
                                             @foreach($paymentPlatforms as $paymentPlatform)
                                                 <label
-                                                       class="btn btn-outline-secondary rounded m-2 p-1"
-                                                       data-bs-target="#{{$paymentPlatform->name}}Collapse"
-                                                       data-bs-toggle="collapse"
+                                                    class="btn btn-outline-secondary rounded m-2 p-1"
+                                                    data-bs-target="#{{$paymentPlatform->name}}Collapse"
+                                                    data-bs-toggle="collapse"
                                                 >
                                                     <input
                                                         type="radio"
@@ -67,12 +67,26 @@
                                             @endforeach
                                         </div>
                                         @foreach($paymentPlatforms as $paymentPlatform)
-                                            <div id="{{$paymentPlatform->name}}Collapse" class="collapse" data-bs-parent="#toggler">
+                                            <div id="{{$paymentPlatform->name}}Collapse" class="collapse"
+                                                 data-bs-parent="#toggler">
                                                 @includeIf('components.'.strtolower($paymentPlatform->name).'-collapse')
                                             </div>
 
                                         @endforeach
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto">
+
+                                    <p class="border-bottom border-primary rounded ">
+                                        @if( !optional(auth()->user())->hasActiveSubscription())
+                                            Quisieras obtener descuento en cada compra
+                                            <a href=""> Subscribirse</a>
+                                        @else
+                                            Tienes un descuento del 10% (al momento de la compra)
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
                             <div class="row  mt-3">

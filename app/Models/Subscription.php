@@ -29,4 +29,9 @@ class Subscription extends Model
     {
         return $this->belongsTo(Plan::class);
     }
+
+    public function isActive()
+    {
+        return $this->active_until->gt(now());
+    }
 }
