@@ -82,7 +82,7 @@
                                     <p class="border-bottom border-primary rounded ">
                                         @if( !optional(auth()->user())->hasActiveSubscription())
                                             Quisieras obtener descuento en cada compra
-                                            <a href=""> Subscribirse</a>
+                                            <a href="{{route('subscribe.show')}}"> Subscribirse</a>
                                         @else
                                             Tienes un descuento del 10% (al momento de la compra)
                                         @endif
