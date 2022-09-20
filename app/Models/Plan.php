@@ -20,4 +20,9 @@ class Plan extends Model
     {
         return $this->hasMany(Subscription::class);
     }
+
+    public function getVisualPriceAttribute(): string
+    {
+        return '$'. number_format($this->price / 100,2,'.',',');
+    }
 }
