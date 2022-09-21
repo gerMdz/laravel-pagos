@@ -5,100 +5,78 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Subscribe') }}</div>
+                    <div class="card-header">Subscribe</div>
 
                     <div class="card-body">
-                        <form action="{{route('subscribe.store')}}" method="POST" id="paymentForm">
+                        <form action="{{ route('subscribe.store') }}" method="POST" id="paymentForm">
                             @csrf
 
                             <div class="row mt-3">
                                 <div class="col">
                                     <label>Seleccione plan</label>
                                     <div class="form-group">
-                                        <div class="btn-group btn-group-toggle"
-                                             data-bs-toggle="buttons"
-                                        >
-                                            @foreach($plans as $plan)
+                                        <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
+                                            @foreach ($plans as $plan)
                                                 <label
                                                     class="btn btn-outline-info rounded m-2 p-3"
                                                 >
                                                     <input
                                                         type="radio"
                                                         name="plan"
-                                                        value="{{$plan->slug}}"
+                                                        value="{{ $plan->slug }}"
                                                         required
                                                     >
-                                                    <p class="h2 font-weight-bold text-capitalize">
-                                                        {{$plan->slug}}
-                                                    </p>
-                                                    <p class="display-4 text-capitalize">
-                                                        {{$plan->visual_price}}
-                                                    </p>
+                                                    <span class="h2 font-weight-bold text-capitalize">
+                                                        {{ $plan->slug }}
+                                                    </span>
 
+                                                    <span class="display-4 text-capitalize">
+                                                        {{ $plan->visual_price }}
+                                                    </span>
                                                 </label>
-
                                             @endforeach
                                         </div>
-                                        @foreach($paymentPlatforms as $paymentPlatform)
-                                            <div id="{{$paymentPlatform->name}}Collapse" class="collapse"
-                                                 data-bs-parent="#toggler">
-                                                @includeIf('components.'.strtolower($paymentPlatform->name).'-collapse')
-                                            </div>
-
-                                        @endforeach
                                     </div>
                                 </div>
                             </div>
 
-
                             <div class="row mt-3">
                                 <div class="col">
-                                    <label>Seleccione plataforma</label>
+                                    <label>Seleccione plataforma de pago</label>
                                     <div class="form-group" id="toggler">
-                                        <div class="btn-group btn-group-toggle"
-                                             data-bs-toggle="buttons"
-                                        >
-                                            @foreach($paymentPlatforms as $paymentPlatform)
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                            @foreach ($paymentPlatforms as $paymentPlatform)
                                                 <label
                                                     class="btn btn-outline-secondary rounded m-2 p-1"
-                                                    data-bs-target="#{{$paymentPlatform->name}}Collapse"
+                                                    data-bs-target="#{{ $paymentPlatform->name }}Collapse"
                                                     data-bs-toggle="collapse"
                                                 >
                                                     <input
                                                         type="radio"
                                                         name="payment_platform"
-                                                        value="{{$paymentPlatform->id}}"
+                                                        value="{{ $paymentPlatform->id }}"
                                                         required
-
                                                     >
-                                                    <img class="img-thumbnail" src="{{asset($paymentPlatform->image)}}"
-                                                         alt="{{$paymentPlatform->name}}">
-
+                                                    <img class="img-thumbnail" src="{{ asset($paymentPlatform->image) }}" alt="LP">
                                                 </label>
-
                                             @endforeach
                                         </div>
-                                        @foreach($paymentPlatforms as $paymentPlatform)
-                                            <div id="{{$paymentPlatform->name}}Collapse" class="collapse"
-                                                 data-bs-parent="#toggler">
-                                                @includeIf('components.'.strtolower($paymentPlatform->name).'-collapse')
+                                        @foreach ($paymentPlatforms as $paymentPlatform)
+                                            <div
+                                                id="{{ $paymentPlatform->name }}Collapse"
+                                                class="collapse"
+                                                data-bs-parent="#toggler"
+                                            >
+                                                @includeIf('components.' . strtolower($paymentPlatform->name) . '-collapse')
                                             </div>
-
                                         @endforeach
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row  mt-3">
-                                <div class="col text-center">
-                                    <button type="submit" id="payButton"
-                                            class="btn btn-primary btn-lg"
-                                    >
-                                        {{ __('subscribe') }}
-                                    </button>
-                                </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" id="payButton" class="btn btn-primary btn-lg">Subscribirse</button>
                             </div>
-
                         </form>
                     </div>
                 </div>
