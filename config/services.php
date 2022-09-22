@@ -44,6 +44,10 @@ return [
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'client_secret' => env('PAYPAL_CLIENT_SECRET'),
         'class' => PayPalService::class,
+        'plans' => [
+            'monthly' => env('PAYPAL_MONTHLY_PLAN'),
+            'yearly' => env('PAYPAL_YEARLY_PLAN'),
+        ]
     ],
     'payu' => [
         'base_uri' => env('PAYU_BASE_URI'),

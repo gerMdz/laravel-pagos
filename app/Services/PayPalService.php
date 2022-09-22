@@ -14,12 +14,15 @@ class PayPalService
     protected $baseUri;
     protected $clientId;
     protected $clientSecret;
+    protected $plans;
+
 
     public function __construct()
     {
         $this->baseUri = config('services.paypal.base_uri');
         $this->clientId = config('services.paypal.client_id');
         $this->clientSecret = config('services.paypal.client_secret');
+        $this->plans = config('services.paypal.plans');
     }
 
     public function resolveAuthorization(&$queryParams, &$formsParams, &$headers)
@@ -132,5 +135,10 @@ class PayPalService
             return 1;
         }
         return 100;
+    }
+
+    public function handleSubscription(Request $request)
+    {
+        dd($this->plans);
     }
 }

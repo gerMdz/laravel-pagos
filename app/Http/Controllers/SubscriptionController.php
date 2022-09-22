@@ -29,12 +29,10 @@ class SubscriptionController extends Controller
     {
         $paymentPlatforms = PaymentPlatform::where('subscriptions_enabled', true)->get();
 
-
         return view('subscribe')->with([
            'plans' => Plan::all(),
            'paymentPlatforms' => $paymentPlatforms
         ]);
-
 
     }
 

@@ -40,7 +40,10 @@ Documentación de PayPal
 
 > https://developers.payulatam.com/latam/es/docs/integrations.html
 
-> https://developers.payulatam.com/latam/es/docs/services/payments.html 
+> https://developers.payulatam.com/latam/es/docs/services/payments.html
+
+### CMD
+> php7.4 artisan route:list
 
 
 ## Learning Laravel
