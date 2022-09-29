@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentPlatform;
 use App\Models\Plan;
+use App\Models\Subscription;
 use App\Resolvers\PaymentPlatformResolver;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
@@ -30,8 +32,8 @@ class SubscriptionController extends Controller
         $paymentPlatforms = PaymentPlatform::where('subscriptions_enabled', true)->get();
 
         return view('subscribe')->with([
-           'plans' => Plan::all(),
-           'paymentPlatforms' => $paymentPlatforms
+            'plans' => Plan::all(),
+            'paymentPlatforms' => $paymentPlatforms
         ]);
 
     }
@@ -53,13 +55,31 @@ class SubscriptionController extends Controller
         return $paymentPlatform->handleSubscription($request);
     }
 
-    public function approval()
+    public function approval(Request $request)
     {
+        $rules = [
+            'plan' => ['required', 'exists:plans, slug']
+        ];
+        $request->validate($rules);
 
+        $plan = Plan::where('slug', $request->plan)->firstOrFail();
+        $user = $request->user();
+
+        $subscription = Subscription::create([
+            'active_until' => now()->addDays($plan->duracion_in_days),
+            'user_id' => $user->id,
+            'plan_id' => $plan->id
+        ]);
+
+        return redirect()
+            ->route('home')
+            ->withSuccess(['payment' => "Gracias {$user->name} por subscribirte. Tu plan {$plan->slug} ya está disponible. Disfrútalo "]);
     }
 
-    public function cancelled()
+    public function cancelled(): RedirectResponse
     {
-
+        return redirect()
+            ->route('subscribe.show')
+            ->withErrors('Proceso cancelado. Vuelve pronto :)');
     }
 }
