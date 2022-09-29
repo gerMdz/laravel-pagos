@@ -6,6 +6,7 @@ use App\Traits\ConsumesExternalServices;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\DocBlock\Tags\Link;
 
 class PayPalService
 {
@@ -167,6 +168,21 @@ class PayPalService
 
     public function handleSubscription(Request $request)
     {
-        dd($this->plans);
+
+        $subscription = $this->createSubscription(
+          $request->plan,
+          $request->user()->name,
+          $request->user()->email,
+
+        );
+
+        $subscriptionLinks = collect($subscription->links);
+
+        $approve = $subscriptionLinks->where('rel', 'approve')->first();
+
+        session()->put('subscriptionId', $subscription->id);
+
+        return redirect($approve->href);
+
     }
 }
