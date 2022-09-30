@@ -62,18 +62,34 @@ class SubscriptionController extends Controller
         ];
         $request->validate($rules);
 
-        $plan = Plan::where('slug', $request->plan)->firstOrFail();
-        $user = $request->user();
+        if (session()->has('subscriptionPlatformId')) {
 
-        $subscription = Subscription::create([
-            'active_until' => now()->addDays($plan->duracion_in_days),
-            'user_id' => $user->id,
-            'plan_id' => $plan->id
-        ]);
+            $paymentPlatform = $this->paymentPlatformResolver
+                ->resolveService(session()->get('subscriptionPlatformId'));
+            if ($paymentPlatform->validateSubscription($request)) {
+
+
+                $plan = Plan::where('slug', $request->plan)->firstOrFail();
+                $user = $request->user();
+
+
+                $subscription = Subscription::create([
+                    'active_until' => now()->addDays($plan->duracion_in_days),
+                    'user_id' => $user->id,
+                    'plan_id' => $plan->id
+                ]);
+
+                return redirect()
+                    ->route('home')
+                    ->withSuccess(['payment' => "Gracias {$user->name} por subscribirte. Tu plan {$plan->slug} ya está disponible. Disfrútalo "]);
+            }
+        }
 
         return redirect()
-            ->route('home')
-            ->withSuccess(['payment' => "Gracias {$user->name} por subscribirte. Tu plan {$plan->slug} ya está disponible. Disfrútalo "]);
+            ->route('subscribe.show')
+            ->withErrors('No pudimos verificar tu subscripción ');
+
+
     }
 
     public function cancelled(): RedirectResponse

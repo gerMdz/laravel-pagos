@@ -173,7 +173,6 @@ class PayPalService
           $request->plan,
           $request->user()->name,
           $request->user()->email,
-
         );
 
         $subscriptionLinks = collect($subscription->links);
@@ -184,5 +183,17 @@ class PayPalService
 
         return redirect($approve->href);
 
+    }
+
+    public function validateSubscription(Request $request): bool
+    {
+        if(session()->has('subscriptionId')) {
+            $subscriptionId = session()->get('subscriptionId');
+
+            session()->forget('subscriptionId');
+
+            return $request->subscription_id == $subscriptionId;
+        }
+        return false;
     }
 }
