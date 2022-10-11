@@ -36,11 +36,17 @@ class PaymentController extends Controller
           'payment_platform' => ['required', 'exists:payment_platforms,id'],
         ];
 
+
+
         $request->validate($rules);
 
         $paymentPlatform = $this->paymentPlatformResolver->resolveService($request->payment_platform);
 
         session()->put('paymentPlatformId', $request->payment_platform );
+
+        if($request->user()->hasActiveSubscription()){
+            $request->value = round($request->value * 0.9, 2);
+        }
 
 
         return $paymentPlatform->handlePayment($request);
