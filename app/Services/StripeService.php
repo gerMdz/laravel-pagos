@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Traits\ConsumesExternalServices;
@@ -85,6 +86,9 @@ class StripeService
             ->withErrors('No pudimos confirmar su pago. Por favor, inténtalo de nuevo');
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function handleSubscription(Request $request)
     {
         $customer = $this->createCustomer(
@@ -130,7 +134,7 @@ class StripeService
             ->withErrors('We were unable to activate your subscription. Try again, please.');
     }
 
-    public function validateSubscription(Request $request)
+    public function validateSubscription(Request $request): bool
     {
         if (session()->has('subscriptionId')) {
             $subscriptionId = session()->get('subscriptionId');
@@ -143,6 +147,9 @@ class StripeService
         return false;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function createIntent($value, $currency, $paymentMethod)
     {
         return $this->makeRequest(
@@ -158,6 +165,9 @@ class StripeService
         );
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function confirmPayment($paymentIntentId)
     {
         return $this->makeRequest(
@@ -166,6 +176,9 @@ class StripeService
         );
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function createCustomer($name, $email, $paymentMethod)
     {
         return $this->makeRequest(
@@ -180,6 +193,9 @@ class StripeService
         );
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function createSubscription($customerId, $paymentMethod, $priceId)
     {
         return $this->makeRequest(
@@ -197,7 +213,7 @@ class StripeService
         );
     }
 
-    public function resolveFactor($currency)
+    public function resolveFactor($currency): int
     {
         $zeroDecimalCurrencies = ['JPY'];
 
