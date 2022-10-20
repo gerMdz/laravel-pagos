@@ -6,6 +6,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Traits\ConsumesExternalServices;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class StripeService
 {
@@ -37,11 +39,14 @@ class StripeService
         return json_decode($response);
     }
 
-    public function resolveAccessToken()
+    public function resolveAccessToken(): string
     {
-        return "Bearer {$this->secret}";
+        return "Bearer $this->secret";
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function handlePayment(Request $request): RedirectResponse
     {
         $request->validate([
@@ -55,6 +60,11 @@ class StripeService
         return redirect()->route('approval');
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws GuzzleException
+     * @throws NotFoundExceptionInterface
+     */
     public function handleApproval()
     {
         if (session()->has('paymentIntentId')) {
@@ -77,7 +87,7 @@ class StripeService
 
                 return redirect()
                     ->route('home')
-                    ->withSuccess(['payment' => "Gracias, {$name}. Hemos recibido tu pago de {$amount}{$currency}."]);
+                    ->withSuccess(['payment' => "Gracias, $name. Hemos recibido tu pago de $amount $currency."]);
             }
         }
 
@@ -134,6 +144,10 @@ class StripeService
             ->withErrors('We were unable to activate your subscription. Try again, please.');
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function validateSubscription(Request $request): bool
     {
         if (session()->has('subscriptionId')) {
@@ -172,7 +186,7 @@ class StripeService
     {
         return $this->makeRequest(
             'POST',
-            "/v1/payment_intents/{$paymentIntentId}/confirm",
+            "/v1/payment_intents/$paymentIntentId/confirm",
         );
     }
 
