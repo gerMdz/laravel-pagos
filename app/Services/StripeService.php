@@ -141,7 +141,7 @@ class StripeService
         }
 
         return redirect()->route('subscribe.show')
-            ->withErrors('We were unable to activate your subscription. Try again, please.');
+            ->withErrors('No pudimos activar su suscripción. Por favor, inténtalo de nuevo.');
     }
 
     /**
